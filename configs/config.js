@@ -1,0 +1,18 @@
+module.exports = {
+  lines: [
+    {
+      name: 'Line 1',
+      port: 'COM3',
+      enabled: true
+    }
+  ],
+  devices: [
+    {
+      type: 'KSD',
+      name: 'KSD1',
+      addr: 1,
+      enabled: true,
+      interval: 1000
+    }
+  ]
+};

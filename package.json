@@ -1,0 +1,19 @@
+{
+  "name": "tritone-node",
+  "version": "0.1.0",
+  "description": "KSD driver",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pavel Khlebko",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.7.0"
+  },
+  "dependencies": {
+    "crc": "^3.8.0",
+    "serialport": "^7.0.2"
+  }
+}
