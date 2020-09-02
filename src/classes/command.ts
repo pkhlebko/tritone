@@ -2,7 +2,12 @@ import crc from 'crc';
 
 export class Command {
 
-  constructor(cmd, addr, attr1, attr2) {
+  private resp;
+  private addr;
+  private reqBuffer;
+  private result;
+
+  constructor(cmd, addr, attr1?, attr2?) {
     this.resp = cmd.resp;
     this.addr = addr;
     this.reqBuffer = reqToBuffer(cmd.req, addr, attr1, attr2);

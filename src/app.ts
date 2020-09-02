@@ -1,7 +1,7 @@
-import { Line } from './classes/line.js';
-import { Device } from './classes/device.js';
-import { appConfig } from './configs/config.js';
-import { TcpServer } from './classes/tcp-server.js';
+ import { Line } from './classes/line';
+import { Device } from './classes/device';
+import { appConfig } from './configs/config';
+import { TcpServer } from "./classes/tcp-server";
 
 const driver = {
   lines: [],
@@ -17,7 +17,7 @@ driver.devices = appConfig.devices.map(item => new Device(item, driver.lines));
 });
  */
 
-const tcpServer = new TcpServer();
+const tcpServer = new TcpServer(2222);
 
-tcpServer.start(2222);
+tcpServer.start();
 setTimeout(() => tcpServer.stop(), 5000000);

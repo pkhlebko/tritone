@@ -1,7 +1,12 @@
-import { Command } from './command.js';
-import { devicesConfig } from '../configs/devices-config.js';
+import { Command } from './command';
+import { devicesConfig } from '../configs/devices-config';
 
 export class Device {
+
+  private addr: number;
+  private name: string;
+  private proto: any;
+  private line: any;
 
   constructor(conf, lines) {
     this.addr = conf.addr || 1;

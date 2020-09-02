@@ -3,6 +3,11 @@ import ByteLength from '@serialport/parser-byte-length';
 
 export class Line {
 
+  private port: string|number;
+  private speed: number;
+  private timeOut: number;
+  private name: string;
+
   constructor(conf) {
     this.port = conf.port || 'COM1';
     this.speed = conf.speed || 19200;

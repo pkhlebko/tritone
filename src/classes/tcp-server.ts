@@ -2,6 +2,9 @@ import net from 'net';
 
 export class TcpServer {
 
+  private _port: number;
+  private _server: any;
+
   constructor(port) {
     this._port = parseInt(port, 10) || 2222;
   }
@@ -9,10 +12,10 @@ export class TcpServer {
   start() {
     this._server = net.createServer();
 
-    this._server.on('close', onClose); // emitted when server closes ...not emitted until all connections closes.
+    this._server.on('close', this.onClose); // emitted when server closes ...not emitted until all connections closes.
     this._server.on('connection', this._onConnection.bind(this)); // emitted when new client connects
-    this._server.on('error', onError); // emits when any error occurs -> calls closed event immediately after this.
-    this._server.on('listening', onListening); // emits when server is bound with server.listen
+    this._server.on('error', this.onError); // emits when any error occurs -> calls closed event immediately after this.
+    this._server.on('listening', this.onListening); // emits when server is bound with server.listen
     this._server.maxConnections = 10;
     this._server.listen(this._port); // static port allocation
 
@@ -125,16 +128,16 @@ export class TcpServer {
     }, 1200000);
   }
 
-}
+  private onClose() {
+    console.info('Server closed !');
+  }
 
-function onClose() {
-  console.info('Server closed !');
-}
+  private onError(error) {
+    console.error('Error: ' + error);
+  }
 
-function onError(error) {
-  console.error('Error: ' + error);
-}
+  private onListening() {
+    console.info('Server is listening!');
+  }
 
-function onListening() {
-  console.info('Server is listening!');
 }
