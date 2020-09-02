@@ -1,25 +1,24 @@
-import net from 'net';
+import { Server, AddressInfo } from 'net';
 
 export class TcpServer {
 
-  private _port: number;
-  private _server: any;
+  private port: number;
+  private server: Server;
 
   constructor(port) {
-    this._port = parseInt(port, 10) || 2222;
+    this.port = parseInt(port, 10) || 2222;
   }
 
   start() {
-    this._server = net.createServer();
+    this.server = new Server();
+    this.server.on('close', this.onClose); // emitted when server closes ...not emitted until all connections closes.
+    this.server.on('connection', this.onConnection.bind(this)); // emitted when new client connects
+    this.server.on('error', this.onError); // emits when any error occurs -> calls closed event immediately after this.
+    this.server.on('listening', this.onListening); // emits when server is bound with server.listen
+    this.server.maxConnections = 10;
+    this.server.listen(this.port); // static port allocation
 
-    this._server.on('close', this.onClose); // emitted when server closes ...not emitted until all connections closes.
-    this._server.on('connection', this._onConnection.bind(this)); // emitted when new client connects
-    this._server.on('error', this.onError); // emits when any error occurs -> calls closed event immediately after this.
-    this._server.on('listening', this.onListening); // emits when server is bound with server.listen
-    this._server.maxConnections = 10;
-    this._server.listen(this._port); // static port allocation
-
-    const islistening = this._server.listening;
+    const islistening = this.server.listening;
 
     if (islistening) {
       console.log('Server is listening');
@@ -29,39 +28,17 @@ export class TcpServer {
   }
 
   stop() {
-    this._server.close();
+    this.server.close();
   }
 
-  _onConnection(socket) {
-    // this property shows the number of characters currently buffered to be written. (Number of characters is approximately equal to the number of bytes to be written, but the buffer may contain strings, and the strings are lazily encoded, so the exact number of bytes is not known.)
-    // Users who experience large or growing bufferSize should attempt to 'throttle' the data flows in their program with pause() and resume().
+  private onConnection(socket) {
+    const { port, family, address } = this.server.address() as AddressInfo;
+    const { localPort, localAddress, remotePort, remoteAddress, remoteFamily } = socket;
 
-    console.log('Buffer size : ' + socket.bufferSize);
-
-    console.log('---------server details -----------------');
-
-    const { port, family, address } = this._server.address();
-
-    console.log('Server is listening at port' + port);
-    console.log('Server ip :' + address);
-    console.log('Server is IP4/IP6 : ' + family);
-
-    const { localPort, localAddress } = socket;
-
-    console.log('Server is listening at LOCAL port' + localPort);
-    console.log('Server LOCAL ip :' + localAddress);
-
-    console.log('------------remote client info --------------');
-
-    const { remotePort, remoteAddress, remoteFamily } = socket;
-
-    console.log('REMOTE Socket is listening at port' + remotePort);
-    console.log('REMOTE Socket ip :' + remoteAddress);
-    console.log('REMOTE Socket is IP4/IP6 : ' + remoteFamily);
-
-    console.log('--------------------------------------------');
-    // var no_of_connections =  server.getConnections(); // sychronous version
-    this._server.getConnections((error, count) => console.log('Number of concurrent connections to the server : ' + count));
+    console.info(`Server is listening at ${address}:${port} ${family}`);
+    console.info(`Server is listening at local ${localAddress}:${localPort}`);
+    console.info(`REMOTE Socket is listening at ${remoteAddress}:${remotePort} ${remoteFamily}`);
+    this.server.getConnections((error, count) => console.log('Number of concurrent connections to the server : ' + count));
 
     socket.setEncoding('utf8');
 
@@ -76,54 +53,44 @@ export class TcpServer {
     socket.on('data', (data) => {
       const { bytesRead, bytesWritten } = socket;
 
-      console.log('Bytes read : ' + bytesRead);
-      console.log('Bytes written : ' + bytesWritten);
-      console.log('Data sent to server : ' + data);
+      console.info(`Bytes read: ${bytesRead} | Bytes written: ${bytesWritten}, Data sent to server: ${data}`);
 
       // echo data
       const isKernelBufferFull = socket.write('Data ::' + data);
 
       if (isKernelBufferFull) {
-        console.log('Data was flushed successfully from kernel buffer i.e written successfully!');
+        console.info('Data was flushed successfully from kernel buffer i.e written successfully!');
       } else {
         socket.pause();
       }
     });
 
     socket.on('drain', () => {
-      console.log('write buffer is empty now .. u can resume the writable stream');
+      console.info('write buffer is empty now .. u can resume the writable stream');
       socket.resume();
     });
 
     socket.on('error', (error) => console.log('Error : ' + error));
 
     socket.on('timeout', () => {
-      console.log('Socket timed out !');
+      console.log('Socket timed out!');
       socket.end('Timed out!');
-      // can call socket.destroy() here too.
     });
 
-    socket.on('end', function (data) {
-      console.log('Socket ended from other end!');
-      console.log('End data : ' + data);
-    });
+    socket.on('end', (data) => console.info(`Socket ended from other end! End data: ${data}`));
 
-    socket.on('close', function (error) {
-      var bread = socket.bytesRead;
-      var bwrite = socket.bytesWritten;
+    socket.on('close', (error) => {
+      const { bytesRead, bytesWritten } = socket;
 
-      console.log('Bytes read : ' + bread);
-      console.log('Bytes written : ' + bwrite);
-      console.log('Socket closed!');
+      console.info(`Bytes read: ${bytesRead} | Bytes written: ${bytesWritten} | Socket closed!`);
+
       if (error) {
-        console.log('Socket was closed coz of transmission error');
+        console.error('Socket was closed coz of transmission error');
       }
     });
 
     setTimeout(() => {
-      const { destroyed } = socket;
-
-      console.log('Socket destroyed:' + destroyed);
+      console.info(`Socket destroyed: ${socket.destroyed}`);
       socket.destroy();
     }, 1200000);
   }
