@@ -1,4 +1,6 @@
 import { Server, AddressInfo } from 'net';
+import { resolve } from 'path';
+import { rejects } from 'assert';
 
 export class TcpServer {
 
@@ -28,7 +30,7 @@ export class TcpServer {
   }
 
   stop() {
-    this.server.close();
+    return new Promise((resolve, reject) => this.server.close((err) => err ? reject(err) : resolve()));
   }
 
   private onConnection(socket) {

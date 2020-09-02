@@ -1,18 +1,23 @@
 import crc from 'crc';
 import { DevCmdCfgModel, DevCfgRespModel } from '../models';
+import { Observable } from 'rxjs';
 
 export class Command {
 
   public readonly addr: number;
   public readonly reqBuffer: Buffer;
-  public readonly resp: DevCfgRespModel|DevCfgRespModel[];
-  public result;
+  public readonly respConfig: DevCfgRespModel|DevCfgRespModel[];
+  public respBuffer$: Observable<Buffer>;
 
   constructor(cmd: DevCmdCfgModel, addr: number, attr1?: string, attr2?: string) {
     this.addr = addr;
-    this.resp = cmd.resp;
+    this.respConfig = cmd.resp;
     this.reqBuffer = this.reqToBuffer(cmd.req, addr, attr1, attr2);
-    this.result = undefined;
+  }
+
+  setRespBufferAndReturnCmd(resp: Observable<Buffer>) {
+    this.respBuffer$ = resp;
+    return this;
   }
 
   private processResponse(cmd: Command, inputs) {

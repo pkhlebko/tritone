@@ -21,6 +21,6 @@ export class Device {
     return this.proto.commands
       .filter(protoCmd => protoCmd.role === 'ReadCurData')
       .map(protoCmd => new Command(protoCmd, this.addr))
-      .map(cmd => this.line.execute(cmd));
+      .map(cmd => cmd.setRespBufferAndReturnCmd(this.line.execute(cmd)));
   }
 }
