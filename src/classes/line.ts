@@ -1,12 +1,13 @@
 import SerialPort from 'serialport';
 import ByteLength from '@serialport/parser-byte-length';
+import { Command } from './command';
 
 export class Line {
 
   private port: string|number;
   private speed: number;
   private timeOut: number;
-  private name: string;
+  public readonly name: string;
 
   constructor(conf) {
     this.port = conf.port || 'COM1';
@@ -15,22 +16,24 @@ export class Line {
     this.name = conf.line || this.port;
   }
 
-  execute(cmd) {
-    const port = new SerialPort(this.port, {
-      autoOpen: false,
-      baudRate: this.speed
-    });
+  execute(cmd: Command) {
+    return this.isIp(this.port) ? this.ipExecute(cmd) : this.serialExecute(cmd);
+  }
+
+  private serialExecute(cmd: Command) {
+    const portOpenOptions = {autoOpen: false, baudRate: this.speed};
+    const port = new SerialPort(this.port as string, portOpenOptions);
 
     cmd.result = new Promise((resolve, reject) => {
       let timeOutId;
 
-      const errorHandler = function(err) {
+      const errorHandler = (err) => {
         if (err) {
           reject(err.message);
         }
       };
 
-      const resultHandler = function(result) {
+      const resultHandler = (result) => {
         clearTimeout(timeOutId);
         port.close(errorHandler);
         resolve(result);
@@ -46,4 +49,13 @@ export class Line {
 
     return cmd;
   }
+
+  private ipExecute(cmd: Command) {
+    return cmd;
+  }
+
+  private isIp(port: string|number) {
+    return isNaN(parseInt(port.toString(), 10));
+  }
+
 }

@@ -1,4 +1,6 @@
-const read = {
+import { DevCfgModel, DevCmdCfgModel } from "../models";
+
+const read: DevCmdCfgModel = {
   role: 'ReadCurData',
   name: 'Read buffer',
   req: ['addr', 102, 'crcb1', 'crcb2', 13, 10],
@@ -272,115 +274,118 @@ const read = {
   }
 };
 
-const readConfig = {
+const readConfig: DevCmdCfgModel = {
   role: 'ReadConfig',
   name: 'Read config',
   req: ['addr', 102, 'crcb1', 'crcb2', 13, 10],
-  in: [
-    {
-      source: 'i01',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i02',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i03',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i04',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i05',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i06',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i07',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i08',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i09',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i10',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i11',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i12',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i13',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i14',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i15',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i16',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i17',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i18',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i19',
-      byte: 6,
-      type: 'Byte'
-    },
-    {
-      source: 'i20',
-      byte: 6,
-      type: 'Byte'
-    }
-  ]
+  resp: {
+    type: 'buffer',
+    in: [
+      {
+        source: 'i01',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i02',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i03',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i04',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i05',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i06',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i07',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i08',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i09',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i10',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i11',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i12',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i13',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i14',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i15',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i16',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i17',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i18',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i19',
+        byte: 6,
+        type: 'Byte'
+      },
+      {
+        source: 'i20',
+        byte: 6,
+        type: 'Byte'
+      }
+    ]
+  }
 };
 
-const write = {
+const write: DevCmdCfgModel = {
   role: 'WriteRegister',
   name: 'Write register',
   req: ['addr', 109, 'arg1b2', 'arg1b1', 'arg2', 'crcb1', 'crcb2', 13, 10],
@@ -394,7 +399,7 @@ const write = {
   ]
 };
 
-export const devicesConfig = [
+export const devicesConfig: DevCfgModel[] = [
   {
     type: 'KSD',
     commands: [
