@@ -1,7 +1,7 @@
-const crc = require('crc');
+import crc from 'crc';
 
-class Command {
-  
+export class Command {
+
   constructor(cmd, addr, attr1, attr2) {
     this.resp = cmd.resp;
     this.addr = addr;
@@ -64,7 +64,7 @@ function reqToBuffer(req, addr, attr1, attr2) {
 
       case 'addr': return addr;
       case 'attr1': return attr1;
-      case 'attr1b1': return getAttr1Byte(attr1, 0);     
+      case 'attr1b1': return getAttr1Byte(attr1, 0);
       case 'attr1b2': return getAttr1Byte(attr1, 1);
       case 'attr2': return attr2;
       case 'crcb1': return getCrcByte(arr, i, 0);
@@ -98,5 +98,3 @@ function validateAddr(buf, addr, offset) {
 function validateCrc(buf, offset) {
   return crc.crc16modbus(buf.slice(0, offset)) === buf.readInt16LE(offset);
 }
-
-module.exports = Command;

@@ -1,4 +1,4 @@
-module.exports = {
+export const appConfig = {
   lines: [
     {
       name: 'Line 1',

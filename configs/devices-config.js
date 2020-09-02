@@ -1,4 +1,4 @@
-let read = {
+const read = {
   role: 'ReadCurData',
   name: 'Read buffer',
   req: ['addr', 102, 'crcb1', 'crcb2', 13, 10],
@@ -272,7 +272,7 @@ let read = {
   }
 };
 
-let readConfig = {
+const readConfig = {
   role: 'ReadConfig',
   name: 'Read config',
   req: ['addr', 102, 'crcb1', 'crcb2', 13, 10],
@@ -380,7 +380,7 @@ let readConfig = {
   ]
 };
 
-let write = {
+const write = {
   role: 'WriteRegister',
   name: 'Write register',
   req: ['addr', 109, 'arg1b2', 'arg1b1', 'arg2', 'crcb1', 'crcb2', 13, 10],
@@ -394,7 +394,7 @@ let write = {
   ]
 };
 
-module.exports = [
+export const devicesConfig = [
   {
     type: 'KSD',
     commands: [

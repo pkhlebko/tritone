@@ -1,7 +1,7 @@
-const Command = require('./command');
-const devicesConfig = require('../configs/devices-config');
+import { Command } from './command.js';
+import { devicesConfig } from '../configs/devices-config.js';
 
-class Device {
+export class Device {
 
   constructor(conf, lines) {
     this.addr = conf.addr || 1;
@@ -23,5 +23,3 @@ class Device {
       });
   }
 }
-
-module.exports = Device;

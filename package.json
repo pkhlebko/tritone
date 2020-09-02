@@ -1,5 +1,6 @@
 {
   "name": "tritone-node",
+  "type": "module",
   "version": "0.1.0",
   "description": "KSD driver",
   "main": "index.js",
@@ -11,11 +12,11 @@
   "license": "MIT",
   "devDependencies": {
     "eslint": "^5.12.0",
-    "nodemon": "^1.18.7"
+    "nodemon": "^2.0.4"
   },
   "dependencies": {
     "crc": "^3.8.0",
-    "serialport": "^7.0.2"
+    "serialport": "^9.0.1"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,7 @@
-const SerialPort = require('serialport');
-const ByteLength = require('@serialport/parser-byte-length');
+import SerialPort from 'serialport';
+import ByteLength from '@serialport/parser-byte-length';
 
-class Line {
+export class Line {
 
   constructor(conf) {
     this.port = conf.port || 'COM1';
@@ -15,7 +15,7 @@ class Line {
       autoOpen: false,
       baudRate: this.speed
     });
-    
+
     cmd.result = new Promise((resolve, reject) => {
       let timeOutId;
 
@@ -42,5 +42,3 @@ class Line {
     return cmd;
   }
 }
-
-module.exports = Line;
