@@ -70,6 +70,7 @@ export class Line {
   }
 
   private ipExecute(cmd: Command): Observable<Buffer> {
+    this.tcpServer.requestData(cmd.reqBuffer);
     return of(new Buffer(''));
   }
 

@@ -1,11 +1,10 @@
-import { Server, AddressInfo } from 'net';
-import { resolve } from 'path';
-import { rejects } from 'assert';
+import { Server, AddressInfo, Socket } from 'net';
 
 export class TcpServer {
 
   private port: number;
   private server: Server;
+  private socket: Socket;
 
   constructor(port) {
     this.port = parseInt(port, 10) || 2222;
@@ -33,7 +32,34 @@ export class TcpServer {
     return new Promise((resolve, reject) => this.server.close((err) => err ? reject(err) : resolve()));
   }
 
-  private onConnection(socket) {
+  async requestData(request: Buffer) {
+    await this.writeData(request);
+    const data = await this.readData();
+  }
+
+  async readData() {
+
+  }
+
+  private writeData(data: Buffer): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      if (!this.socket) {
+        reject('Socket is empty');
+      }
+
+      const isKernelBufferFull = this.socket.write(data, () => {
+
+      });
+
+      if (isKernelBufferFull) {
+        return true;
+      } else {
+        this.socket.pause();
+      }
+    });
+  }
+
+  private onConnection(socket: Socket) {
     const { port, family, address } = this.server.address() as AddressInfo;
     const { localPort, localAddress, remotePort, remoteAddress, remoteFamily } = socket;
 
