@@ -16,7 +16,7 @@ driver.devices = appConfig.devices.map(item => new Device(item, driver.lines));
 });
  */
 
-const tcpServer = new TcpServer(2222);
+const tcpServer = new TcpServer(11001);
 
 tcpServer.start();
 setTimeout(() => tcpServer.stop(), 5000000);

@@ -3,7 +3,8 @@ export const appConfig = {
     {
       name: 'Line 1',
       port: 'COM3',
-      enabled: true
+      flowMode: true,
+      enabled: true,
     }
   ],
   devices: [

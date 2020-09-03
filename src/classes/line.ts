@@ -12,6 +12,8 @@ export class Line {
   private ipLine: boolean;
   private tcpServer?: TcpServer;
   public readonly name: string;
+  private flowMode: boolean;
+  private enabled: boolean;
 
   constructor(conf) {
     this.port = conf.port || 'COM1';
@@ -19,8 +21,10 @@ export class Line {
     this.timeOut = conf.timeOut || 250;
     this.name = conf.line || this.port;
     this.ipLine = this.isIp(this.port);
+    this.flowMode = conf.flowMode || false;
+    this.enabled = conf.enabled || true;
 
-    if (this.ipLine) {
+    if (this.ipLine && this.enabled) {
       this.tcpServer = new TcpServer(this.port);
       this.tcpServer.start;
     }
