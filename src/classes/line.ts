@@ -1,8 +1,10 @@
 import SerialPort from 'serialport';
 import ByteLength from '@serialport/parser-byte-length';
 import { Command } from './command';
-import { Observable, of } from 'rxjs';
-import { TcpServer } from './tcp-server';
+import { Observable, of, } from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
+import { TcpServer, ServerEvent } from './tcp-server';
+import colors from 'colors';
 
 export class Line {
 
@@ -14,6 +16,7 @@ export class Line {
   public readonly name: string;
   private flowMode: boolean;
   private enabled: boolean;
+  private serverEvents$: Observable<ServerEvent>;
 
   constructor(conf) {
     this.port = conf.port || 'COM1';
@@ -26,7 +29,19 @@ export class Line {
 
     if (this.ipLine && this.enabled) {
       this.tcpServer = new TcpServer(this.port);
-      this.tcpServer.start();
+      this.serverEvents$ = this.tcpServer.start();
+
+      const onServerEvent = this.onServerEvent.bind(this);
+      const onServerError = this.onServerError.bind(this)
+      const onServerComplete = this.onServerError.bind(this);
+
+      this.serverEvents$.pipe(
+        catchError((err) => of({type: 'info', body: err}))
+      ).subscribe({
+        next: onServerEvent,
+        error: onServerError,
+        complete: onServerComplete
+      });
     }
   }
 
@@ -41,8 +56,27 @@ export class Line {
     return this.ipLine ? this.ipExecute(cmd) : this.serialExecute(cmd);
   }
 
+  private onServerEvent(event: ServerEvent) {
+    const {type, body} = event;
+    const isData = type === 'data';
+    const typeColor = isData ? colors.green : colors.blue;
+    const text: string = isData ? Uint8Array.from(body as Buffer).join('-') : body as string;
+
+    console.info(typeColor(type), this.getCurrentTime(), colors.gray(text));
+  }
+
+  private onServerError(err: Error) {
+    if (err) {
+      console.error(this.getCurrentTime(), colors.red(err.stack || err.message));
+    }
+  }
+
+  private onServerComplete() {
+    console.info(this.getCurrentTime(), colors.yellow(`Server is down`));
+  }
+
   private isIp(port: string|number) {
-    return isNaN(parseInt(port.toString(), 10));
+    return !isNaN(parseInt(port.toString(), 10));
   }
 
   private serialExecute(cmd: Command): Observable<Buffer> {
@@ -74,9 +108,16 @@ export class Line {
   }
 
   private ipExecute(cmd: Command): Observable<Buffer> {
-    this.tcpServer.requestData(cmd.reqBuffer);
+    this.tcpServer.writeData(cmd.reqBuffer);
     return of(new Buffer(''));
   }
 
+  private getCurrentTime(): string {
+    const currentDate = new Date();
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const seconds = currentDate.getSeconds();
+    return colors.white(`${hours}:${minutes}:${seconds}`);
+  }
 
 }
