@@ -26,7 +26,7 @@ export class Line {
 
     if (this.ipLine && this.enabled) {
       this.tcpServer = new TcpServer(this.port);
-      this.tcpServer.start;
+      this.tcpServer.start();
     }
   }
 
